@@ -152,6 +152,142 @@ angular.module('gridApp', [])
             }
         }
 
+        // Pan functionality variables
+        let isPanning = false;
+        let startPanX = 0;
+        let startPanY = 0;
+        let currentTranslateX = 0;
+        let currentTranslateY = 0;
+        let gridScale = 1;
+        let lastZoomPoint = { x: 0, y: 0 };
+
+        // Add pan event listeners to grid container
+        const gridContainer = document.getElementById('grid-container');
+        
+        gridContainer.addEventListener('mousedown', startPan);
+        gridContainer.addEventListener('mousemove', pan);
+        gridContainer.addEventListener('mouseup', endPan);
+        gridContainer.addEventListener('mouseleave', endPan);
+        
+        // Touch events for mobile
+        gridContainer.addEventListener('touchstart', handleTouchStart);
+        gridContainer.addEventListener('touchmove', handleTouchMove);
+        gridContainer.addEventListener('touchend', handleTouchEnd);
+
+        // Zoom functionality
+        gridContainer.addEventListener('wheel', handleZoom);
+
+        function startPan(e) {
+            if ($scope.selectedTool === 'move' || e.button === 1 || (e.button === 0 && e.altKey)) {
+                isPanning = true;
+                startPanX = e.clientX - currentTranslateX;
+                startPanY = e.clientY - currentTranslateY;
+                gridContainer.style.cursor = 'grabbing';
+                e.preventDefault();
+            }
+        }
+
+        function pan(e) {
+            if (!isPanning) return;
+            
+            currentTranslateX = e.clientX - startPanX;
+            currentTranslateY = e.clientY - startPanY;
+            
+            updateGridTransform();
+            e.preventDefault();
+        }
+
+        function endPan() {
+            isPanning = false;
+            gridContainer.style.cursor = $scope.selectedTool === 'move' ? 'grab' : 'default';
+        }
+
+        function handleTouchStart(e) {
+            if ($scope.selectedTool === 'move' || e.touches.length === 2) {
+                isPanning = true;
+                startPanX = e.touches[0].clientX - currentTranslateX;
+                startPanY = e.touches[0].clientY - currentTranslateY;
+                e.preventDefault();
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (!isPanning || e.touches.length !== 1) return;
+            
+            currentTranslateX = e.touches[0].clientX - startPanX;
+            currentTranslateY = e.touches[0].clientY - startPanY;
+            
+            updateGridTransform();
+            e.preventDefault();
+        }
+
+        function handleTouchEnd() {
+            isPanning = false;
+        }
+
+        function handleZoom(e) {
+            e.preventDefault();
+            
+            // Get mouse position relative to grid container
+            const rect = gridContainer.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Calculate position in grid space
+            const gridX = (mouseX - currentTranslateX) / gridScale;
+            const gridY = (mouseY - currentTranslateY) / gridScale;
+
+            const delta = e.deltaY;
+            const zoomFactor = delta > 0 ? 0.9 : 1.1;
+            
+            // Limit zoom level
+            const newScale = Math.min(Math.max(gridScale * zoomFactor, 0.5), 2);
+            
+            if (newScale !== gridScale) {
+                // Calculate new translation to keep mouse point fixed
+                currentTranslateX = mouseX - (gridX * newScale);
+                currentTranslateY = mouseY - (gridY * newScale);
+                
+                gridScale = newScale;
+                updateGridTransform();
+            }
+        }
+
+        function updateGridTransform() {
+            grid.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${gridScale}) rotateX(60deg) rotateZ(45deg)`;
+        }
+
+        // Modify existing mouse event handlers to work with panning
+        const originalHandleMouseDown = handleMouseDown;
+        handleMouseDown = function(event) {
+            if (!isPanning && $scope.selectedTool !== 'move') {
+                originalHandleMouseDown(event);
+            }
+        };
+
+        const originalHandleMouseEnter = handleMouseEnter;
+        handleMouseEnter = function(event) {
+            if (!isPanning && $scope.selectedTool !== 'move') {
+                originalHandleMouseEnter(event);
+            }
+        };
+
+        const originalHandleMouseUp = handleMouseUp;
+        handleMouseUp = function(event) {
+            if (!isPanning && $scope.selectedTool !== 'move') {
+                originalHandleMouseUp(event);
+            }
+        };
+
+        // Update cursor style when selecting move tool
+        $scope.$watch('selectedTool', function(newTool) {
+            if (newTool === 'move') {
+                gridContainer.style.cursor = 'grab';
+            } else {
+                gridContainer.style.cursor = 'default';
+            }
+        });
+
         // Handle mouse down event
         function handleMouseDown(event) {
             if ($scope.selectedTool === 'fence') {

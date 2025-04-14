@@ -2,10 +2,15 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1E1E2E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Isometric Grid</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div ng-app="gridApp" ng-controller="GridController">
@@ -38,6 +43,10 @@
                 <div class="toolbar-item" ng-class="{'selected': selectedTool === 'erase'}" ng-click="selectTool('erase')">
                     <div class="toolbar-icon erase"></div>
                     <span>Borrar</span>
+                </div>
+                <div class="toolbar-item" ng-class="{'selected': selectedTool === 'move'}" ng-click="selectTool('move')">
+                    <div class="toolbar-icon move"></div>
+                    <span>Mover</span>
                 </div>
             </div>
         </div>
