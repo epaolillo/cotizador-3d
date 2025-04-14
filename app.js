@@ -7,11 +7,11 @@ angular.module('gridApp', [])
 
         // Price configuration per square meter
         const PRICES = {
-            ground: 1500,    // Movimiento de suelo
-            plate: 2500,     // Platea
-            grass: 800,      // Grama
-            water: 3500,     // Espejo de agua
-            fence: 1200      // Cerca por metro lineal
+            ground: 15000,    // Movimiento de suelo
+            plate: 25000,     // Platea
+            grass: 8000,      // Grama
+            water: 35000,     // Espejo de agua
+            fence: 12000      // Cerca por metro lineal
         };
 
         // Budget tracking
