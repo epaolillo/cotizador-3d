@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Isometric Grid</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div ng-app="gridApp" ng-controller="GridController">
+        <div class="toolbar">
+            <div class="toolbar-header">
+                <h1>STEINBACH</h1>
+                <div class="toolbar-subtitle">Cotizacion en tiempo real</div>
+            </div>
+            <div class="toolbar-items">
+                <div class="toolbar-item" ng-class="{'selected': selectedTool === 'ground'}" ng-click="selectTool('ground')">
+                    <div class="toolbar-icon ground"></div>
+                    <span>Movimiento de suelo</span>
+                </div>
+                <div class="toolbar-item" ng-class="{'selected': selectedTool === 'plate'}" ng-click="selectTool('plate')">
+                    <div class="toolbar-icon plate"></div>
+                    <span>Platea</span>
+                </div>
+                <div class="toolbar-item" ng-class="{'selected': selectedTool === 'grass'}" ng-click="selectTool('grass')">
+                    <div class="toolbar-icon grass"></div>
+                    <span>Grama</span>
+                </div>
+                <div class="toolbar-item" ng-class="{'selected': selectedTool === 'water'}" ng-click="selectTool('water')">
+                    <div class="toolbar-icon water"></div>
+                    <span>Espejo de agua</span>
+                </div>
+                <div class="toolbar-item" ng-class="{'selected': selectedTool === 'fence'}" ng-click="selectTool('fence')">
+                    <div class="toolbar-icon fence"></div>
+                    <span>Cerca</span>
+                </div>
+                <div class="toolbar-item" ng-class="{'selected': selectedTool === 'erase'}" ng-click="selectTool('erase')">
+                    <div class="toolbar-icon erase"></div>
+                    <span>Borrar</span>
+                </div>
+            </div>
+        </div>
+        <div class="main-container">
+            <div class="container">
+                <div id="grid-container">
+                    <div class="grid" id="grid"></div>
+                </div>
+            </div>
+            <div class="budget-panel">
+                <div class="budget-header">
+                    <h2>PRESUPUESTO</h2>
+                </div>
+                <div class="budget-items">
+                    <div class="budget-item" ng-repeat="(type, item) in budget.items">
+                        <div class="item-description">
+                            <span class="item-name">{{getItemName(type)}}</span>
+                            <span class="item-quantity">{{item.quantity}} {{item.unit}}</span>
+                        </div>
+                        <div class="item-price">
+                            <span class="unit-price">${{item.price | number}}/{{item.unit}}</span>
+                            <span class="total-price">${{item.total | number}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="budget-total">
+                    <span>TOTAL</span>
+                    <span>${{budget.total | number}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html> 
