@@ -32,7 +32,7 @@
 /* Grid lines */
 .canvas__grid-line {
   position: absolute;
-  background-color: rgba(100, 181, 246, 0.05);
+  background-color: rgba(173, 181, 189, 0.2);
   pointer-events: none;
 }
 
@@ -58,21 +58,21 @@
 }
 
 .canvas__fence-preview--horizontal {
-  border-top: 4px solid #455a64;
-  border-bottom: 4px solid #455a64;
+  border-top: 4px solid #6c757d;
+  border-bottom: 4px solid #6c757d;
 }
 
 .canvas__fence-preview--vertical {
-  border-left: 4px solid #455a64;
-  border-right: 4px solid #455a64;
+  border-left: 4px solid #6c757d;
+  border-right: 4px solid #6c757d;
 }
 
 .canvas__fence-preview--diagonal1 {
-  background: linear-gradient(45deg, transparent 48%, #455a64 48%, #455a64 52%, transparent 52%);
+  background: linear-gradient(45deg, transparent 48%, #6c757d 48%, #6c757d 52%, transparent 52%);
 }
 
 .canvas__fence-preview--diagonal2 {
-  background: linear-gradient(-45deg, transparent 48%, #455a64 48%, #455a64 52%, transparent 52%);
+  background: linear-gradient(-45deg, transparent 48%, #6c757d 48%, #6c757d 52%, transparent 52%);
 }
 
 /* Responsive styles */
