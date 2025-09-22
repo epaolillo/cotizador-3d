@@ -4,11 +4,10 @@ import { getFenceOrientation } from '../utils/gridUtils';
 
 // Custom hook for canvas interactions (pan, zoom, selection)
 export const useCanvasInteractions = () => {
-  // Canvas transform state
+  // Canvas transform state - only pan (no zoom)
   const [transform, setTransform] = useState({
     translateX: 0,
-    translateY: 0,
-    scale: 1
+    translateY: 0
   });
 
   // Interaction state
@@ -44,17 +43,21 @@ export const useCanvasInteractions = () => {
     };
   }, [interactionMode, transform.translateX, transform.translateY]);
 
-  // Handle panning
+  // Handle panning - infinite canvas, no constraints
   const handlePan = useCallback((event) => {
     if (!isPanning) return;
 
     const deltaX = event.clientX - panStartRef.current.x;
     const deltaY = event.clientY - panStartRef.current.y;
-
+    
+    const newTranslateX = transformStartRef.current.translateX + deltaX;
+    const newTranslateY = transformStartRef.current.translateY + deltaY;
+    
+    // No constraints - infinite canvas
     setTransform(prev => ({
       ...prev,
-      translateX: transformStartRef.current.translateX + deltaX,
-      translateY: transformStartRef.current.translateY + deltaY
+      translateX: newTranslateX,
+      translateY: newTranslateY
     }));
   }, [isPanning]);
 
@@ -63,36 +66,6 @@ export const useCanvasInteractions = () => {
     setIsPanning(false);
   }, []);
 
-  // Handle zoom
-  const handleZoom = useCallback((event, containerRect) => {
-    event.preventDefault();
-    
-    // Get mouse position relative to container
-    const mouseX = event.clientX - containerRect.left;
-    const mouseY = event.clientY - containerRect.top;
-
-    // Calculate position in grid space
-    const gridX = (mouseX - transform.translateX) / transform.scale;
-    const gridY = (mouseY - transform.translateY) / transform.scale;
-
-    const delta = event.deltaY;
-    const zoomFactor = delta > 0 ? 0.9 : 1.1;
-    
-    // Limit zoom level
-    const newScale = Math.min(Math.max(transform.scale * zoomFactor, 0.5), 2);
-    
-    if (newScale !== transform.scale) {
-      // Calculate new translation to keep mouse point fixed
-      const newTranslateX = mouseX - (gridX * newScale);
-      const newTranslateY = mouseY - (gridY * newScale);
-      
-      setTransform({
-        translateX: newTranslateX,
-        translateY: newTranslateY,
-        scale: newScale
-      });
-    }
-  }, [transform]);
 
   // Start selection
   const startSelection = useCallback((cell) => {
@@ -164,16 +137,26 @@ export const useCanvasInteractions = () => {
     setFencePreview(null);
   }, []);
 
+  // Reset view to center
+  const resetView = useCallback(() => {
+    setTransform({
+      translateX: 0,
+      translateY: 0
+    });
+    clearInteractions();
+  }, [clearInteractions]);
+
   // Update interaction mode
   const setMode = useCallback((mode) => {
     clearInteractions();
     setInteractionMode(mode);
   }, [clearInteractions]);
 
-  // Get transform string for CSS
+  // Get transform string for CSS - pan only (no zoom)
   const getTransformString = useCallback(() => {
-    return `translate(${transform.translateX}px, ${transform.translateY}px) scale(${transform.scale}) rotateX(60deg) rotateZ(45deg)`;
-  }, [transform]);
+    // Fixed isometric rotation only - no pan transforms needed since grid is fixed
+    return `translate(-50%, -50%) rotateX(60deg) rotateZ(45deg)`;
+  }, []);
 
   return {
     // Transform state
@@ -196,10 +179,10 @@ export const useCanvasInteractions = () => {
     
     // Actions
     setMode,
+    resetView,
     startPan,
     handlePan,
     endPan,
-    handleZoom,
     startSelection,
     updateSelection,
     startFencePlacement,

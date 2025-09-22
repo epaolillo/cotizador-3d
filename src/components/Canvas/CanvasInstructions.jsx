@@ -28,11 +28,7 @@ const CanvasInstructions = () => {
             </div>
             <div className="canvas-instructions__item">
               <strong>Click Derecho:</strong>
-              <span>Pan (mover vista)</span>
-            </div>
-            <div className="canvas-instructions__item">
-              <strong>Rueda del Mouse:</strong>
-              <span>Zoom in/out</span>
+              <span>Pan (navegación infinita)</span>
             </div>
             <div className="canvas-instructions__item">
               <strong>Arrastrar:</strong>
@@ -41,6 +37,10 @@ const CanvasInstructions = () => {
             <div className="canvas-instructions__item">
               <strong>Herramienta Cerca:</strong>
               <span>Primer click: inicio, segundo click: final</span>
+            </div>
+            <div className="canvas-instructions__item">
+              <strong>Tecla 'R' o 'Home':</strong>
+              <span>Volver al centro</span>
             </div>
           </div>
           <button 

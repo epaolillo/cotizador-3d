@@ -2,7 +2,12 @@
 export const GRID_CONFIG = {
   GRID_SIZE: 40,
   GRID_SIZE_X: 15,
-  GRID_SIZE_Y: 15
+  GRID_SIZE_Y: 15,
+  // New viewport-based system
+  VIEWPORT_SIZE_X: 50, // Fixed viewport width (configurable)
+  VIEWPORT_SIZE_Y: 50, // Fixed viewport height (configurable)
+  VIEWPORT_CENTER_X: 25, // Center of viewport
+  VIEWPORT_CENTER_Y: 25, // Center of viewport
 };
 
 // Price configuration per square meter

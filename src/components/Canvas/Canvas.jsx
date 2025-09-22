@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState, useEffect } from 'react';
 import Tile from '../Tile/Tile';
 import CanvasInstructions from './CanvasInstructions';
 import { useCanvasInteractions } from '../../hooks/useCanvasInteractions';
@@ -7,16 +7,21 @@ import { getCellsInSelection } from '../../utils/gridUtils';
 import './Canvas.css';
 
 const Canvas = ({
-  gridCells,
+  fixedTiles,
   gridLines,
   cellLayers,
   fences,
   selectedTool,
   onApplyTool,
   onApplyToolToSelection,
-  onAddFence
+  onAddFence,
+  canvasInteractions
 }) => {
   const containerRef = useRef(null);
+  
+  // Use provided canvas interactions or create new ones (backwards compatibility)
+  const localCanvasInteractions = useCanvasInteractions();
+  const interactions = canvasInteractions || localCanvasInteractions;
   
   const {
     getTransformString,
@@ -29,13 +34,13 @@ const Canvas = ({
     startPan,
     handlePan,
     endPan,
-    handleZoom,
     startSelection,
     updateSelection,
     startFencePlacement,
     updateFencePreview,
-    setMode
-  } = useCanvasInteractions();
+    setMode,
+    resetView
+  } = interactions;
 
   // Determine interaction mode based on selected tool
   React.useEffect(() => {
@@ -71,12 +76,6 @@ const Canvas = ({
     endPan();
   }, [endPan]);
 
-  const handleWheel = useCallback((event) => {
-    const containerRect = containerRef.current?.getBoundingClientRect();
-    if (containerRect) {
-      handleZoom(event, containerRect);
-    }
-  }, [handleZoom]);
 
   // Handle tile interactions
   const handleTileMouseDown = useCallback((cell, event) => {
@@ -123,6 +122,23 @@ const Canvas = ({
   const handleContextMenu = useCallback((event) => {
     event.preventDefault();
   }, []);
+  
+  // Handle keyboard shortcuts
+  const handleKeyDown = useCallback((event) => {
+    // Reset view on 'R' key or 'Home' key
+    if (event.key === 'r' || event.key === 'R' || event.key === 'Home') {
+      event.preventDefault();
+      resetView();
+    }
+  }, [resetView]);
+  
+  // Add keyboard event listener
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   // Get cursor style
   const getCursorStyle = () => {
@@ -146,13 +162,9 @@ const Canvas = ({
         onMouseMove={handleContainerMouseMove}
         onMouseUp={handleContainerMouseUp}
         onMouseLeave={handleContainerMouseLeave}
-        onWheel={handleWheel}
         onContextMenu={handleContextMenu}
       >
-        <div 
-          className="canvas__grid" 
-          style={{ transform: getTransformString() }}
-        >
+        <div className="canvas__grid">
           {/* Grid Lines */}
           {gridLines.map((line) => (
             <div
@@ -162,21 +174,28 @@ const Canvas = ({
             />
           ))}
 
-          {/* Grid Cells (Tiles) */}
-          {gridCells.map((cell) => {
-            const topLayer = cellLayers[cell.id] && cellLayers[cell.id].length > 0 
-              ? cellLayers[cell.id][cellLayers[cell.id].length - 1] 
+          {/* FIXED Tiles - same DOM elements always, only content changes */}
+          {fixedTiles.map((tile) => {
+            // Get data for this world position
+            const worldId = tile.worldId;
+            const topLayer = tile.layers && tile.layers.length > 0 
+              ? tile.layers[tile.layers.length - 1] 
               : null;
             
-            const cellFences = fences.filter(fence => fence.cellId === cell.id);
-            const isInSelection = cellsInSelection.some(selCell => selCell.id === cell.id);
+            const tileFences = tile.fences || [];
+            const isInSelection = cellsInSelection.some(selCell => selCell.id === worldId);
 
             return (
               <Tile
-                key={cell.id}
-                cell={cell}
+                key={tile.id} // Stable viewport ID - never changes
+                cell={{
+                  id: worldId, // World ID for logic
+                  x: tile.worldX,
+                  y: tile.worldY,
+                  style: tile.style // Fixed position
+                }}
                 topLayer={topLayer}
-                fences={cellFences}
+                fences={tileFences}
                 isSelected={false}
                 isInSelection={isInSelection}
                 onMouseDown={handleTileMouseDown}

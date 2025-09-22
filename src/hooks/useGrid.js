@@ -1,15 +1,45 @@
-import { useState, useCallback, useMemo } from 'react';
-import { generateGridCells, generateGridLines, getCellsInSelection } from '../utils/gridUtils';
+import { useState, useCallback, useMemo, useRef } from 'react';
+import { generateGridCells, generateGridLines, getCellsInSelection, calculateVisibleBounds, generateVisibleGridCells, generateVisibleGridLines } from '../utils/gridUtils';
 
-// Custom hook for grid management
-export const useGrid = () => {
+// Custom hook for grid management with infinite procedural generation
+export const useGrid = (containerDimensions = { width: 1200, height: 800 }, transform = { translateX: 0, translateY: 0, scale: 1 }) => {
   const [cellLayers, setCellLayers] = useState({});
   const [fences, setFences] = useState([]);
   const [selectedTool, setSelectedTool] = useState('move');
   
-  // Generate grid data - memoized for performance
-  const gridCells = useMemo(() => generateGridCells(), []);
-  const gridLines = useMemo(() => generateGridLines(), []);
+  // Round transform values for throttling (reduces recalculations)
+  const roundedTransform = useMemo(() => ({
+    translateX: Math.round(transform.translateX / 10) * 10, // Round to nearest 10px
+    translateY: Math.round(transform.translateY / 10) * 10,
+    scale: Math.round(transform.scale * 20) / 20 // Round to nearest 0.05
+  }), [transform.translateX, transform.translateY, transform.scale]);
+
+  // Generate dynamic grid data based on viewport
+  const gridCells = useMemo(() => {
+    if (!containerDimensions.width || !containerDimensions.height) {
+      return generateGridCells(); // Fallback to static grid
+    }
+    
+    const bounds = calculateVisibleBounds(
+      containerDimensions.width,
+      containerDimensions.height,
+      roundedTransform
+    );
+    return generateVisibleGridCells(bounds);
+  }, [containerDimensions.width, containerDimensions.height, roundedTransform]);
+
+  const gridLines = useMemo(() => {
+    if (!containerDimensions.width || !containerDimensions.height) {
+      return generateGridLines(); // Fallback to static grid
+    }
+    
+    const bounds = calculateVisibleBounds(
+      containerDimensions.width,
+      containerDimensions.height,
+      roundedTransform
+    );
+    return generateVisibleGridLines(bounds);
+  }, [containerDimensions.width, containerDimensions.height, roundedTransform]);
 
   // Apply tool to a specific cell
   const applyToolToCell = useCallback((cellId, toolId) => {

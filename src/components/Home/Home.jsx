@@ -1,26 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Canvas from '../Canvas/Canvas';
 import Toolbar from '../Toolbar/Toolbar';
 import BudgetPanel from '../BudgetPanel/BudgetPanel';
-import { useGrid } from '../../hooks/useGrid';
+import { useGridMatrix } from '../../hooks/useGridMatrix';
 import { useBudget } from '../../hooks/useBudget';
-import { INTERACTION_MODES } from '../../utils/constants';
+import { useCanvasInteractions } from '../../hooks/useCanvasInteractions';
 import './Home.css';
 
 const Home = () => {
+  // Get canvas transform state  
+  const canvasInteractions = useCanvasInteractions();
+  const { transform } = canvasInteractions;
+  
+  // Use the new matrix-based grid system (much more efficient!)
   const {
     cellLayers,
     fences,
     selectedTool,
-    gridCells,
+    fixedTiles,
     gridLines,
     setSelectedTool,
     applyToolToCell,
     applyToolToSelection,
-    addFence
-  } = useGrid();
+    addFence,
+    getViewportInfo
+  } = useGridMatrix(transform);
 
   const { budget } = useBudget(cellLayers, fences);
+  
+  // Debug viewport info (can be removed in production)
+  useEffect(() => {
+    const info = getViewportInfo();
+    console.log('🎯 CARTESIAN PAN SYSTEM:', {
+      '📏 Grid': 'FIXED isometric visualization',
+      '🔲 Fixed Tiles': `${info.sizeX}x${info.sizeY} = ${info.tileCount} DOM elements (CONSTANT)`,
+      '🌍 World Center': `(${info.offsetX}, ${info.offsetY})`,
+      '🎮 Pan Mode': 'CARTESIAN (mouse ↓ = content ↓)',
+      '🔄 Transform': 'Cartesian → Isometric coordinates',
+      '💾 Data Storage': `${info.dataSize} cells with content`,
+      '⚡ Performance': 'ZERO DOM creation/destruction'
+    });
+  }, [transform, getViewportInfo]);
 
   // Handle tool selection
   const handleToolSelect = (toolId) => {
@@ -46,7 +66,7 @@ const Home = () => {
     <div className="home">
       <div className="home__main-container">
         <Canvas
-          gridCells={gridCells}
+          fixedTiles={fixedTiles}
           gridLines={gridLines}
           cellLayers={cellLayers}
           fences={fences}
@@ -54,6 +74,7 @@ const Home = () => {
           onApplyTool={handleApplyTool}
           onApplyToolToSelection={handleApplyToolToSelection}
           onAddFence={handleAddFence}
+          canvasInteractions={canvasInteractions}
         />
         <BudgetPanel budget={budget} />
       </div>
