@@ -1,13 +1,27 @@
 // Grid configuration constants
 export const GRID_CONFIG = {
   GRID_SIZE: 40,
-  GRID_SIZE_X: 15,
-  GRID_SIZE_Y: 15,
-  // New viewport-based system
-  VIEWPORT_SIZE_X: 50, // Fixed viewport width (configurable)
-  VIEWPORT_SIZE_Y: 50, // Fixed viewport height (configurable)
-  VIEWPORT_CENTER_X: 25, // Center of viewport
-  VIEWPORT_CENTER_Y: 25, // Center of viewport
+  GRID_SIZE_X: 20,
+  GRID_SIZE_Y: 20,
+  // Viewport configuration
+  VIEWPORT_SIZE_X: 25, // Fixed viewport width (configurable)
+  VIEWPORT_SIZE_Y: 25, // Fixed viewport height (configurable)
+  
+  // Calculated viewport center for screen centering
+  get VIEWPORT_CENTER_PIXELS_X() {
+    return (this.VIEWPORT_SIZE_X * this.GRID_SIZE) / 2;
+  },
+  get VIEWPORT_CENTER_PIXELS_Y() {
+    return (this.VIEWPORT_SIZE_Y * this.GRID_SIZE) / 2;
+  },
+  
+  // Screen centering offsets (will be calculated dynamically)
+  get VIEWPORT_OFFSET_X() {
+    return  this.VIEWPORT_CENTER_PIXELS_X;
+  },
+  get VIEWPORT_OFFSET_Y() {
+    return this.VIEWPORT_CENTER_PIXELS_Y;
+  }
 };
 
 // Price configuration per square meter

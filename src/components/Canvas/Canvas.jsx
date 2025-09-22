@@ -3,7 +3,7 @@ import Tile from '../Tile/Tile';
 import CanvasInstructions from './CanvasInstructions';
 import { useCanvasInteractions } from '../../hooks/useCanvasInteractions';
 import { INTERACTION_MODES, TOOLS_CONFIG } from '../../utils/constants';
-import { getCellsInSelection } from '../../utils/gridUtils';
+import { getCellsInSelection, generateBackgroundGrid } from '../../utils/gridUtils';
 import './Canvas.css';
 
 const Canvas = ({
@@ -19,6 +19,7 @@ const Canvas = ({
 }) => {
   const containerRef = useRef(null);
   const [hoveredTileId, setHoveredTileId] = useState(null);
+  const [backgroundGrid, setBackgroundGrid] = useState([]);
   
   // Use provided canvas interactions or create new ones (backwards compatibility)
   const localCanvasInteractions = useCanvasInteractions();
@@ -149,6 +150,23 @@ const Canvas = ({
     };
   }, [handleKeyDown]);
 
+  // Initialize background grid
+  React.useEffect(() => {
+    const updateBackgroundGrid = () => {
+      setBackgroundGrid(generateBackgroundGrid());
+    };
+    
+    // Initial setup
+    updateBackgroundGrid();
+    
+    // Update on window resize
+    window.addEventListener('resize', updateBackgroundGrid);
+    
+    return () => {
+      window.removeEventListener('resize', updateBackgroundGrid);
+    };
+  }, []);
+
   // Get cursor style
   const getCursorStyle = () => {
     if (isPanning) {
@@ -163,6 +181,18 @@ const Canvas = ({
   return (
     <div className="canvas">
       <CanvasInstructions />
+      
+      {/* Background Grid - covers entire screen */}
+      <div className="canvas__background-grid">
+        {backgroundGrid.map((line) => (
+          <div
+            key={line.id}
+            className={`canvas__background-line canvas__background-line--${line.type}`}
+            style={line.style}
+          />
+        ))}
+      </div>
+      
       <div
         ref={containerRef}
         className="canvas__container"
@@ -174,7 +204,7 @@ const Canvas = ({
         onContextMenu={handleContextMenu}
       >
         <div className="canvas__grid">
-          {/* Grid Lines */}
+          {/* Active Grid Lines - only in viewport */}
           {gridLines.map((line) => (
             <div
               key={line.id}
@@ -230,6 +260,7 @@ const Canvas = ({
           )}
         </div>
       </div>
+      
     </div>
   );
 };

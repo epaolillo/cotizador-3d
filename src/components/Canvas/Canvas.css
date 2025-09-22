@@ -29,10 +29,35 @@
   min-height: 200%;
 }
 
-/* Grid lines */
+/* Background Grid - covers entire screen */
+.canvas__background-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.canvas__background-line {
+  position: absolute;
+  background-color: rgba(173, 181, 189, 0.1);
+  pointer-events: none;
+}
+
+.canvas__background-line--horizontal {
+  height: 1px;
+}
+
+.canvas__background-line--vertical {
+  width: 1px;
+}
+
+/* Active Grid lines - only in viewport */
 .canvas__grid-line {
   position: absolute;
-  background-color: rgba(173, 181, 189, 0.2);
+  background-color: rgba(173, 181, 189, 0.3);
   pointer-events: none;
 }
 
@@ -74,6 +99,7 @@
 .canvas__fence-preview--diagonal2 {
   background: linear-gradient(-45deg, transparent 48%, #6c757d 48%, #6c757d 52%, transparent 52%);
 }
+
 
 /* Responsive styles */
 @media screen and (max-width: 768px) {

@@ -12,8 +12,8 @@ export const createEmptyCell = (x, y) => ({
   layers: [],
   fences: [],
   style: {
-    left: x * GRID_CONFIG.GRID_SIZE,
-    top: y * GRID_CONFIG.GRID_SIZE,
+    left: x * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_X,
+    top: y * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_Y,
     width: GRID_CONFIG.GRID_SIZE,
     height: GRID_CONFIG.GRID_SIZE
   }
@@ -90,8 +90,8 @@ export class ViewportMatrix {
           
           // Fixed style that never changes
           style: {
-            left: vx * GRID_CONFIG.GRID_SIZE,
-            top: vy * GRID_CONFIG.GRID_SIZE,
+            left: vx * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_X,
+            top: vy * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_Y,
             width: GRID_CONFIG.GRID_SIZE,
             height: GRID_CONFIG.GRID_SIZE
           },
@@ -123,8 +123,8 @@ export class ViewportMatrix {
         id: `h-${vy}`,
         type: 'horizontal',
         style: {
-          top: vy * GRID_CONFIG.GRID_SIZE,
-          left: 0,
+          top: vy * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_Y,
+          left: GRID_CONFIG.VIEWPORT_OFFSET_X,
           width: this.sizeX * GRID_CONFIG.GRID_SIZE,
           height: '1px'
         }
@@ -137,8 +137,8 @@ export class ViewportMatrix {
         id: `v-${vx}`,
         type: 'vertical',
         style: {
-          left: vx * GRID_CONFIG.GRID_SIZE,
-          top: 0,
+          left: vx * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_X,
+          top: GRID_CONFIG.VIEWPORT_OFFSET_Y,
           width: '1px',
           height: this.sizeY * GRID_CONFIG.GRID_SIZE
         }
@@ -271,8 +271,8 @@ export const generateVisibleGridCells = (bounds) => {
         y,
         layers: [],
         style: {
-          left: x * GRID_CONFIG.GRID_SIZE,
-          top: y * GRID_CONFIG.GRID_SIZE,
+          left: x * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_X,
+          top: y * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_Y,
           width: GRID_CONFIG.GRID_SIZE,
           height: GRID_CONFIG.GRID_SIZE
         }
@@ -313,8 +313,8 @@ export const generateVisibleGridLines = (bounds) => {
       id: `h-${i}`,
       type: 'horizontal',
       style: {
-        top: i * GRID_CONFIG.GRID_SIZE,
-        left: lineMinX,
+        top: i * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_Y,
+        left: lineMinX + GRID_CONFIG.VIEWPORT_OFFSET_X,
         width: lineWidth,
         height: '1px'
       }
@@ -327,8 +327,8 @@ export const generateVisibleGridLines = (bounds) => {
       id: `v-${i}`,
       type: 'vertical',
       style: {
-        left: i * GRID_CONFIG.GRID_SIZE,
-        top: lineMinY,
+        left: i * GRID_CONFIG.GRID_SIZE + GRID_CONFIG.VIEWPORT_OFFSET_X,
+        top: lineMinY + GRID_CONFIG.VIEWPORT_OFFSET_Y,
         width: '1px',
         height: lineHeight
       }
@@ -349,6 +349,53 @@ export const generateGridLines = () => {
   };
   return generateVisibleGridLines(defaultBounds);
 };
+
+// Generate background grid for fog of war effect
+export const generateBackgroundGrid = () => {
+  const lines = [];
+  const gridSize = GRID_CONFIG.GRID_SIZE;
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+  
+  // Calculate how many grid lines we need to cover the entire screen
+  const linesX = Math.ceil(screenWidth / gridSize) + 2;
+  const linesY = Math.ceil(screenHeight / gridSize) + 2;
+  
+  // Start from negative to cover left/top edges
+  const startX = -1;
+  const startY = -1;
+  
+  // Horizontal background lines (covering entire screen)
+  for (let i = startY; i < linesY + startY; i++) {
+    lines.push({
+      id: `bg-h-${i}`,
+      type: 'horizontal',
+      style: {
+        top: i * gridSize,
+        left: 0,
+        width: '100vw',
+        height: '1px'
+      }
+    });
+  }
+
+  // Vertical background lines (covering entire screen)
+  for (let i = startX; i < linesX + startX; i++) {
+    lines.push({
+      id: `bg-v-${i}`,
+      type: 'vertical', 
+      style: {
+        left: i * gridSize,
+        top: 0,
+        width: '1px',
+        height: '100vh'
+      }
+    });
+  }
+
+  return lines;
+};
+
 
 // Get cells within selection rectangle
 export const getCellsInSelection = (startCell, endCell) => {
