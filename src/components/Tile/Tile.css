@@ -1,0 +1,97 @@
+.tile {
+  position: absolute;
+  border: 1px solid rgba(135, 206, 235, 0.1);
+  background-color: rgba(30, 144, 255, 0.02);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hide grid lines for tiles with layers */
+.tile--ground,
+.tile--plate,
+.tile--grass,
+.tile--water {
+  border: none;
+}
+
+.tile--selected {
+  background-color: rgba(100, 181, 246, 0.1);
+  border-color: rgba(100, 181, 246, 0.3);
+  box-shadow: 0 0 10px rgba(100, 181, 246, 0.2);
+}
+
+.tile--in-selection {
+  background-color: rgba(100, 181, 246, 0.05);
+  border-color: rgba(100, 181, 246, 0.2);
+}
+
+/* Layer 3D Structure */
+.tile__layer-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.tile__layer-top {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(0);
+}
+
+.tile__layer-front {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  transform-origin: bottom;
+  transform: rotateX(-90deg) translateY(100%);
+}
+
+.tile__layer-side {
+  position: absolute;
+  height: 100%;
+  right: 0;
+  transform-origin: right;
+  transform: rotateY(90deg) translateX(100%);
+}
+
+/* Fence Styles */
+.tile__fence {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.tile__fence--horizontal {
+  border-top: 4px solid #455a64;
+  border-bottom: 4px solid #455a64;
+}
+
+.tile__fence--vertical {
+  border-left: 4px solid #455a64;
+  border-right: 4px solid #455a64;
+}
+
+.tile__fence--diagonal1 {
+  background: linear-gradient(45deg, transparent 48%, #455a64 48%, #455a64 52%, transparent 52%);
+}
+
+.tile__fence--diagonal2 {
+  background: linear-gradient(-45deg, transparent 48%, #455a64 48%, #455a64 52%, transparent 52%);
+}
+
+/* Selection Preview */
+.tile__selection-preview {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(100, 181, 246, 0.1);
+  border: 2px solid rgba(100, 181, 246, 0.3);
+  pointer-events: none;
+  z-index: 1;
+  box-shadow: 0 0 20px rgba(100, 181, 246, 0.15);
+}

@@ -1,0 +1,37 @@
+.home {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #1E1E2E;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.home__main-container {
+  display: flex;
+  width: 100vw;
+  height: calc(100vh - 150px);
+  flex: 1;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .home {
+    overflow: auto;
+  }
+
+  .home__main-container {
+    flex-direction: column;
+    height: auto;
+    padding-bottom: 180px;
+  }
+}
+
+/* Horizontal landscape orientation */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+  .home__main-container {
+    flex-direction: row;
+    padding-bottom: 100px;
+  }
+}
