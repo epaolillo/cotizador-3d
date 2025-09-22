@@ -10,6 +10,8 @@ Una aplicación React moderna para cotización de proyectos de paisajismo y cons
 - **Interfaz Intuitiva**: Diseño futurista con interacciones fluidas
 - **Responsive**: Funciona perfectamente en dispositivos móviles y tablets
 - **Pan & Zoom**: Navegación completa del canvas con gestos táctiles
+- **Click Derecho Pan**: Navega sin cambiar herramientas con click derecho
+- **Instrucciones Integradas**: Guía visual de controles accesible desde el canvas
 
 ## 🛠️ Tecnologías
 
@@ -72,10 +74,12 @@ src/
 
 ### Controles
 
-- **Clic + Arrastrar**: Seleccionar área para aplicar material
-- **Doble Clic**: Aplicar herramienta a una celda específica
-- **Herramienta Mover**: Arrastra para hacer pan, rueda del mouse para zoom
+- **Clic Izquierdo + Arrastrar**: Seleccionar área para aplicar material
+- **Clic Derecho + Arrastrar**: Pan (mover vista) - ¡Funciona con cualquier herramienta!
+- **Rueda del Mouse**: Zoom in/out en el punto del cursor
+- **Herramienta Mover**: Clic izquierdo también permite pan
 - **Herramienta Cerca**: Primer clic marca inicio, segundo clic coloca la cerca
+- **Botón "?"**: Muestra/oculta controles en tiempo real
 
 ### Presupuesto
 

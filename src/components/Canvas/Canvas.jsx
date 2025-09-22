@@ -1,5 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import Tile from '../Tile/Tile';
+import CanvasInstructions from './CanvasInstructions';
 import { useCanvasInteractions } from '../../hooks/useCanvasInteractions';
 import { INTERACTION_MODES, TOOLS_CONFIG } from '../../utils/constants';
 import { getCellsInSelection } from '../../utils/gridUtils';
@@ -49,7 +50,11 @@ const Canvas = ({
 
   // Handle container mouse events
   const handleContainerMouseDown = useCallback((event) => {
-    if (selectedTool === 'move') {
+    // Allow pan with left click when move tool is selected OR with right click always
+    if (selectedTool === 'move' && event.button === 0) {
+      startPan(event);
+    } else if (event.button === 2) { // Right click for pan
+      event.preventDefault(); // Prevent context menu
       startPan(event);
     }
   }, [selectedTool, startPan]);
@@ -77,6 +82,14 @@ const Canvas = ({
   const handleTileMouseDown = useCallback((cell, event) => {
     event.stopPropagation();
     
+    // Right click always starts pan, regardless of selected tool
+    if (event.button === 2) {
+      event.preventDefault(); // Prevent context menu
+      startPan(event);
+      return;
+    }
+    
+    // Left click behavior depends on selected tool
     if (selectedTool === 'fence') {
       const result = startFencePlacement(cell);
       if (result && onAddFence) {
@@ -88,7 +101,7 @@ const Canvas = ({
         onApplyToolToSelection(result.start, result.end, selectedTool);
       }
     }
-  }, [selectedTool, startFencePlacement, startSelection, onAddFence, onApplyToolToSelection]);
+  }, [selectedTool, startFencePlacement, startSelection, onAddFence, onApplyToolToSelection, startPan]);
 
   const handleTileMouseEnter = useCallback((cell) => {
     if (selectedTool === 'fence') {
@@ -106,16 +119,25 @@ const Canvas = ({
 
   const cellsInSelection = getCellsInCurrentSelection();
 
+  // Prevent context menu on right click
+  const handleContextMenu = useCallback((event) => {
+    event.preventDefault();
+  }, []);
+
   // Get cursor style
   const getCursorStyle = () => {
+    if (isPanning) {
+      return 'grabbing';
+    }
     if (selectedTool === 'move') {
-      return isPanning ? 'grabbing' : 'grab';
+      return 'grab';
     }
     return 'default';
   };
 
   return (
     <div className="canvas">
+      <CanvasInstructions />
       <div
         ref={containerRef}
         className="canvas__container"
@@ -125,6 +147,7 @@ const Canvas = ({
         onMouseUp={handleContainerMouseUp}
         onMouseLeave={handleContainerMouseLeave}
         onWheel={handleWheel}
+        onContextMenu={handleContextMenu}
       >
         <div 
           className="canvas__grid" 

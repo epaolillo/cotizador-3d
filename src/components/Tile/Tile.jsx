@@ -23,6 +23,11 @@ const Tile = ({
     }
   };
 
+  const handleContextMenu = (event) => {
+    // Prevent default context menu to allow right-click pan
+    event.preventDefault();
+  };
+
   const handleMouseEnter = (event) => {
     if (onMouseEnter) {
       onMouseEnter(cell, event);
@@ -51,6 +56,7 @@ const Tile = ({
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseUp={handleMouseUp}
+      onContextMenu={handleContextMenu}
     >
       {/* 3D Layer Structure */}
       {layerConfig && layerConfig.layer && (

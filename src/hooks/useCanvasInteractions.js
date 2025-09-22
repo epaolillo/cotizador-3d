@@ -29,7 +29,9 @@ export const useCanvasInteractions = () => {
 
   // Start panning
   const startPan = useCallback((event) => {
-    if (interactionMode !== INTERACTION_MODES.PAN) return;
+    // Allow pan with move tool (any button) or right click regardless of mode
+    const allowPan = interactionMode === INTERACTION_MODES.PAN || event.button === 2;
+    if (!allowPan) return;
     
     setIsPanning(true);
     panStartRef.current = {
