@@ -28,19 +28,6 @@ const Home = () => {
 
   const { budget } = useBudget(cellLayers, fences);
   
-  // Debug viewport info (can be removed in production)
-  useEffect(() => {
-    const info = getViewportInfo();
-    console.log('🎯 CARTESIAN PAN SYSTEM:', {
-      '📏 Grid': 'FIXED isometric visualization',
-      '🔲 Fixed Tiles': `${info.sizeX}x${info.sizeY} = ${info.tileCount} DOM elements (CONSTANT)`,
-      '🌍 World Center': `(${info.offsetX}, ${info.offsetY})`,
-      '🎮 Pan Mode': 'CARTESIAN (mouse ↓ = content ↓)',
-      '🔄 Transform': 'Cartesian → Isometric coordinates',
-      '💾 Data Storage': `${info.dataSize} cells with content`,
-      '⚡ Performance': 'ZERO DOM creation/destruction'
-    });
-  }, [transform, getViewportInfo]);
 
   // Handle tool selection
   const handleToolSelect = (toolId) => {
