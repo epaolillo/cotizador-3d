@@ -20,7 +20,7 @@
 
 .canvas__grid {
   position: absolute;
-  top: 50%;
+  top: -50px;
   left: 50%;
   transform-origin: center;
   /* FIXED isometric rotation - NEVER changes */

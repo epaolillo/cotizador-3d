@@ -4,8 +4,8 @@ export const GRID_CONFIG = {
   GRID_SIZE_X: 20,
   GRID_SIZE_Y: 20,
   // Viewport configuration
-  VIEWPORT_SIZE_X: 25, // Fixed viewport width (configurable)
-  VIEWPORT_SIZE_Y: 25, // Fixed viewport height (configurable)
+  VIEWPORT_SIZE_X: 40, // Fixed viewport width (configurable)
+  VIEWPORT_SIZE_Y: 40, // Fixed viewport height (configurable)
   
   // Calculated viewport center for screen centering
   get VIEWPORT_CENTER_PIXELS_X() {

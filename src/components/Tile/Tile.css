@@ -3,7 +3,6 @@
   border: 1px solid rgba(222, 226, 230, 0.4);
   background-color: rgba(248, 249, 250, 0.1);
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .tile--hovered {
