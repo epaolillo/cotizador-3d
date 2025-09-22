@@ -2,12 +2,16 @@
   "name": "cotizador-3d",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://epaolillo.github.io/cotizador-3d/",
   "description": "Cotizador 3D isométrico en React",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run move-to-docs",
+    "build-gh-pages": "react-scripts build && npm run move-to-docs",
+    "move-to-docs": "rm -rf docs && mv build docs",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "npm run build-gh-pages && git add docs && git commit -m 'Deploy to GitHub Pages' && git push"
   },
   "dependencies": {
     "react": "^18.3.1",
