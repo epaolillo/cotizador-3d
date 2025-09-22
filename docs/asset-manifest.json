@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/cotizador-3d/static/css/main.6dbd9451.css",
-    "main.js": "/cotizador-3d/static/js/main.3cf4399e.js",
+    "main.css": "/cotizador-3d/static/css/main.9a6fd73d.css",
+    "main.js": "/cotizador-3d/static/js/main.2d163899.js",
     "index.html": "/cotizador-3d/index.html",
-    "main.6dbd9451.css.map": "/cotizador-3d/static/css/main.6dbd9451.css.map",
-    "main.3cf4399e.js.map": "/cotizador-3d/static/js/main.3cf4399e.js.map"
+    "main.9a6fd73d.css.map": "/cotizador-3d/static/css/main.9a6fd73d.css.map",
+    "main.2d163899.js.map": "/cotizador-3d/static/js/main.2d163899.js.map"
   },
   "entrypoints": [
-    "static/css/main.6dbd9451.css",
-    "static/js/main.3cf4399e.js"
+    "static/css/main.9a6fd73d.css",
+    "static/js/main.2d163899.js"
   ]
 }
