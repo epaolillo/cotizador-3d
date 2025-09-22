@@ -156,10 +156,6 @@ Thumbs.db
 # Local development
 .env.development
 
-# Build artifacts
-build/
-dist/
-
 # Webpack
 .webpack/
 
