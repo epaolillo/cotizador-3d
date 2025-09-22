@@ -18,6 +18,7 @@ const Canvas = ({
   canvasInteractions
 }) => {
   const containerRef = useRef(null);
+  const [hoveredTileId, setHoveredTileId] = useState(null);
   
   // Use provided canvas interactions or create new ones (backwards compatibility)
   const localCanvasInteractions = useCanvasInteractions();
@@ -103,12 +104,20 @@ const Canvas = ({
   }, [selectedTool, startFencePlacement, startSelection, onAddFence, onApplyToolToSelection, startPan]);
 
   const handleTileMouseEnter = useCallback((cell) => {
+    // Update hovered tile for highlight
+    setHoveredTileId(cell.id);
+    
     if (selectedTool === 'fence') {
       updateFencePreview(cell);
     } else if (isSelecting) {
       updateSelection(cell);
     }
   }, [selectedTool, isSelecting, updateFencePreview, updateSelection]);
+
+  const handleTileMouseLeave = useCallback(() => {
+    // Clear hovered tile when mouse leaves tile area
+    setHoveredTileId(null);
+  }, []);
 
   // Get cells in current selection
   const getCellsInCurrentSelection = useCallback(() => {
@@ -184,6 +193,7 @@ const Canvas = ({
             
             const tileFences = tile.fences || [];
             const isInSelection = cellsInSelection.some(selCell => selCell.id === worldId);
+            const isHovered = hoveredTileId === worldId;
 
             return (
               <Tile
@@ -198,8 +208,10 @@ const Canvas = ({
                 fences={tileFences}
                 isSelected={false}
                 isInSelection={isInSelection}
+                isHovered={isHovered}
                 onMouseDown={handleTileMouseDown}
                 onMouseEnter={handleTileMouseEnter}
+                onMouseLeave={handleTileMouseLeave}
               />
             );
           })}

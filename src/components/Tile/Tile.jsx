@@ -8,8 +8,10 @@ const Tile = ({
   fences,
   isSelected,
   isInSelection,
+  isHovered,
   onMouseDown,
   onMouseEnter,
+  onMouseLeave,
   onMouseUp
 }) => {
   // Get tool configuration for the top layer
@@ -34,6 +36,12 @@ const Tile = ({
     }
   };
 
+  const handleMouseLeave = (event) => {
+    if (onMouseLeave) {
+      onMouseLeave(cell, event);
+    }
+  };
+
   const handleMouseUp = (event) => {
     if (onMouseUp) {
       onMouseUp(cell, event);
@@ -44,7 +52,9 @@ const Tile = ({
     <div
       className={`tile ${topLayer ? `tile--${topLayer}` : ''} ${
         isSelected ? 'tile--selected' : ''
-      } ${isInSelection ? 'tile--in-selection' : ''}`}
+      } ${isInSelection ? 'tile--in-selection' : ''} ${
+        isHovered ? 'tile--hovered' : ''
+      }`}
       style={{
         left: `${cell.style.left}px`,
         top: `${cell.style.top}px`,
@@ -55,6 +65,7 @@ const Tile = ({
       data-y={cell.y}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onMouseUp={handleMouseUp}
       onContextMenu={handleContextMenu}
     >
